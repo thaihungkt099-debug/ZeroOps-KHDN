@@ -13,7 +13,7 @@ USERNAME = "khdn"
 PASSWORD = "bidv_secure"
 
 # === THÔNG TIN CẤU HÌNH EMAIL GỬI CẢNH BÁO ===
-EMAIL_GUI = "thaihungkt099@gmail.com"  #
+EMAIL_GUI = "thaihungkt099@gmail.com"  # Đã sửa lỗi thiếu chữ 'n'
 MAT_KHAU_APP = "bype qymw idhk tlbe"
 EMAIL_NHAN = "thaihungkt099@gmail.com"
 
