@@ -117,7 +117,7 @@ def gui_canh_bao():
         
         return f"Đã gửi thành công email báo cáo của {tuan_hien_tai}!", 200
     except Exception as e:
-        return f"Lỗi phát sinh khi chạy tự động: {e}", 500
+        return f"Lỗi phát sinh khi chạy tự động: {e}", 200
 
 # === GIAO DIỆN WEB (GIỮ NGUYÊN) ===
 @app.route('/')
