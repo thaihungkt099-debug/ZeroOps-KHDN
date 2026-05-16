@@ -10,12 +10,12 @@ app = Flask(__name__)
 
 # === THIẾT LẬP TÀI KHOẢN & MẬT KHẨU TRUY CẬP WEB ===
 USERNAME = "khdn"
-PASSWORD = "bidv_secure"  
+PASSWORD = "bidv_secure"
 
 # === THÔNG TIN CẤU HÌNH EMAIL GỬI CẢNH BÁO ===
-EMAIL_GUI = "thaihugkt099@gmail.com"  # Điền Gmail của bạn
-MAT_KHAU_APP = "bype qymw idhk tlbe" # Dán 16 ký tự mật khẩu ứng dụng
-EMAIL_NHAN = "thaihungkt099@gmail.com" # Gửi báo cáo cho chính bạn
+EMAIL_GUI = "thaihungkt099@gmail.com"  #
+MAT_KHAU_APP = "bype qymw idhk tlbe"
+EMAIL_NHAN = "thaihungkt099@gmail.com"
 
 # Chìa khóa bí mật để Cron-job kích hoạt
 SECRET_CRON_KEY = "v60-auto-2026" 
@@ -68,7 +68,6 @@ def lay_du_lieu():
     pivot_df = pivot_df.reindex(DANH_SACH_CHUAN).fillna(0)
     pivot_df.reset_index(inplace=True)
     
-    # Đã tích hợp bản vá tự động xử lý lỗi cột
     pivot_df.rename(columns={'NhanVien': 'Nhân Sự', 'index': 'Nhân Sự'}, inplace=True)
     return pivot_df
 
