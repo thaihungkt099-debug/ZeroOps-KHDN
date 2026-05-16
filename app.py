@@ -68,7 +68,7 @@ def lay_du_lieu():
     pivot_df = summary.pivot(index='NhanVien', columns='Tuan', values='SoLuotGap').fillna(0)
     pivot_df = pivot_df.reindex(DANH_SACH_CHUAN).fillna(0)
     pivot_df.reset_index(inplace=True)
-    pivot_df.rename(columns={'index': 'Nhân Sự'}, inplace=True)
+    pivot_df.rename(columns={'NhanVien': 'Nhân Sự', 'index': 'Nhân Sự'}, inplace=True)
     return pivot_df
 
 # === API ẨN GỬI CẢNH BÁO TỰ ĐỘNG (KHÔNG BỊ KHÓA PASS) ===
