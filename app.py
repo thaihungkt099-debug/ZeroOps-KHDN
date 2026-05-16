@@ -2,9 +2,8 @@ from flask import Flask, request, Response
 from functools import wraps
 import pandas as pd
 from datetime import datetime
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import urllib.parse
+import urllib.request
 
 app = Flask(__name__)
 
@@ -12,10 +11,9 @@ app = Flask(__name__)
 USERNAME = "khdn"
 PASSWORD = "bidv_secure"
 
-# === THÔNG TIN CẤU HÌNH EMAIL GỬI CẢNH BÁO ===
-EMAIL_GUI = "thaihungkt099@gmail.com"  # Đã sửa lỗi thiếu chữ 'n'
-MAT_KHAU_APP = "bype qymw idhk tlbe"
-EMAIL_NHAN = "thaihungkt099@gmail.com"
+# === THÔNG TIN CẤU HÌNH TELEGRAM BOT ===
+TELEGRAM_TOKEN = "8738016733:AAG9FYpOLhpJ8XR64os8t3NNtX-54YslpJE"  # VD: "7123456789:AAH_XYZ..."
+TELEGRAM_CHAT_ID = "8753418113" # VD: "123456789"
 
 # Chìa khóa bí mật để Cron-job kích hoạt
 SECRET_CRON_KEY = "v60-auto-2026" 
@@ -67,10 +65,10 @@ def lay_du_lieu():
     pivot_df = summary.pivot(index='NhanVien', columns='Tuan', values='SoLuotGap').fillna(0)
     pivot_df = pivot_df.reindex(DANH_SACH_CHUAN).fillna(0)
     pivot_df.reset_index(inplace=True)
-    
     pivot_df.rename(columns={'NhanVien': 'Nhân Sự', 'index': 'Nhân Sự'}, inplace=True)
     return pivot_df
 
+# === API ẨN GỬI CẢNH BÁO QUA TELEGRAM ===
 @app.route('/api/gui-canh-bao')
 def gui_canh_bao():
     key = request.args.get('key')
@@ -89,25 +87,25 @@ def gui_canh_bao():
         else:
             danh_sach_tre = DANH_SACH_CHUAN 
             
-        noi_dung = f"Kính gửi Quản lý,\n\nHệ thống ghi nhận cán bộ chưa đạt đủ KPI (3 lượt/tuần):\n"
-        noi_dung += "\n".join([f"- {ten}" for ten in danh_sach_tre])
+        # Soạn tin nhắn Telegram
+        noi_dung = f"🚨 *[CẢNH BÁO KPI] Báo cáo tương tác KHDN - {tuan_hien_tai}*\n\n"
+        noi_dung += "Hệ thống AI ghi nhận cán bộ chưa đạt đủ KPI (3 lượt/tuần):\n"
+        for ten in danh_sach_tre:
+            noi_dung += f"➖ {ten}\n"
         
-        msg = MIMEMultipart()
-        msg['From'] = f"Zero-Ops System <{EMAIL_GUI}>"
-        msg['To'] = EMAIL_NHAN
-        msg['Subject'] = f"[CẢNH BÁO KPI] Báo cáo tương tác KHDN - {tuan_hien_tai}"
-        msg.attach(MIMEText(noi_dung, 'plain', 'utf-8'))
+        # Lệnh gửi tin nhắn thẳng tới Telegram
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        data = urllib.parse.urlencode({'chat_id': TELEGRAM_CHAT_ID, 'text': noi_dung, 'parse_mode': 'Markdown'}).encode('utf-8')
+        req = urllib.request.Request(url, data=data)
         
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(EMAIL_GUI, MAT_KHAU_APP)
-        server.send_message(msg)
-        server.quit()
-        
-        return f"Đã gửi thành công email báo cáo của {tuan_hien_tai}!", 200
+        with urllib.request.urlopen(req) as response:
+            res = response.read()
+            
+        return f"Đã gửi thành công tin nhắn báo cáo qua Telegram!", 200
     except Exception as e:
-        return f"<h3>Lỗi hệ thống trong hàm gửi thư: {e}</h3>", 200
+        return f"<h3>Lỗi hệ thống trong hàm gửi Telegram: {e}</h3>", 200
 
+# === GIAO DIỆN WEB (GIỮ NGUYÊN) ===
 @app.route('/')
 @requires_auth
 def home():
