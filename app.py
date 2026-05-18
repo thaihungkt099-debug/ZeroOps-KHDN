@@ -93,4 +93,5 @@ def gui_canh_bao():
         for ten in danh_sach_tre:
             noi_dung += f"➖ {ten}\n"
         
-        url = f"
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        data = urllib.parse.urlencode({'chat_id': TELEGRAM_CHAT_ID, 'text': noi_dung, 'parse_mode': 'Markdown'}).encode('utf-8')
